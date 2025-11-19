@@ -52,10 +52,9 @@ const io = new Server(server, {
 // MIDDLEWARES CƠ BẢN VÀ CẤU HÌNH EXPRESS
 // ----------------------------------------------------
 
-// ✅ FIX 1: Xử lý Preflight OPTIONS request TƯỜNG MINH
-app.options('*', cors(corsOptions)); 
+// ❌ ĐÃ XÓA DÒNG GÂY LỖI: app.options('*', cors(corsOptions)); 
 
-// ✅ FIX 2: Áp dụng CORS cho mọi Route
+// ✅ FIX: Chỉ cần áp dụng CORS cho mọi Route
 app.use(cors(corsOptions));
 
 app.use(express.json()); // Xử lý body JSON (cho API)
