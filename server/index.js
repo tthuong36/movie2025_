@@ -23,8 +23,12 @@ const server = http.createServer(app); // Tạo HTTP server từ ứng dụng Ex
 // KHỞI TẠO SOCKET.IO SERVER (REAL-TIME)
 // ----------------------------------------------------
 const io = new Server(server, {
+    // ✅ SỬA LỖI CORS SOCKET.IO: Mở rộng origin cho Vercel và Local
     cors: {
-        origin: 'http://localhost:3000', // Cho phép kết nối từ Frontend
+        origin: [
+            'http://localhost:3000', // Local development
+            'https://movie2025-me3hox7luz-tthuong36-projects.vercel.app' // Domain Vercel của bạn
+        ], 
         methods: ['GET', 'POST'],
         credentials: true,
     }
@@ -34,7 +38,11 @@ const io = new Server(server, {
 // MIDDLEWARES CƠ BẢN VÀ CẤU HÌNH EXPRESS
 // ----------------------------------------------------
 app.use(cors({
-    origin: 'http://localhost:3000', // Cho phép truy cập từ Frontend
+    // ✅ SỬA LỖI CORS EXPRESS: Mở rộng origin cho Vercel và Local
+    origin: [
+        'http://localhost:3000', 
+        'https://movie2025-me3hox7luz-tthuong36-projects.vercel.app'
+    ],
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,
 }));
