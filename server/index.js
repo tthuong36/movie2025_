@@ -20,32 +20,43 @@ const port = process.env.PORT || 5000;
 const server = http.createServer(app); // Tạo HTTP server từ ứng dụng Express
 
 // ----------------------------------------------------
+// CẤU HÌNH CORS CHUNG
+// ----------------------------------------------------
+const allowedOrigins = [
+    'http://localhost:3000', 
+    'https://movie2025-me3hox7luz-tthuong36-projects.vercel.app' // Domain Vercel của bạn
+];
+
+const corsOptions = {
+    origin: (origin, callback) => {
+        // Cho phép các yêu cầu từ domain được liệt kê hoặc không có origin (ví dụ: Postman)
+        if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'), false);
+        }
+    },
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    credentials: true,
+};
+
+// ----------------------------------------------------
 // KHỞI TẠO SOCKET.IO SERVER (REAL-TIME)
 // ----------------------------------------------------
 const io = new Server(server, {
-    // ✅ SỬA LỖI CORS SOCKET.IO: Mở rộng origin cho Vercel và Local
-    cors: {
-        origin: [
-            'http://localhost:3000', // Local development
-            'https://movie2025-me3hox7luz-tthuong36-projects.vercel.app' // Domain Vercel của bạn
-        ], 
-        methods: ['GET', 'POST'],
-        credentials: true,
-    }
+    // ✅ Áp dụng CORS Options cho Socket.IO
+    cors: corsOptions
 });
 
 // ----------------------------------------------------
 // MIDDLEWARES CƠ BẢN VÀ CẤU HÌNH EXPRESS
 // ----------------------------------------------------
-app.use(cors({
-    // ✅ SỬA LỖI CORS EXPRESS: Mở rộng origin cho Vercel và Local
-    origin: [
-        'http://localhost:3000', 
-        'https://movie2025-me3hox7luz-tthuong36-projects.vercel.app'
-    ],
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    credentials: true,
-}));
+
+// ✅ FIX 1: Xử lý Preflight OPTIONS request TƯỜNG MINH
+app.options('*', cors(corsOptions)); 
+
+// ✅ FIX 2: Áp dụng CORS cho mọi Route
+app.use(cors(corsOptions));
 
 app.use(express.json()); // Xử lý body JSON (cho API)
 app.use(express.urlencoded({ extended: false })); // Xử lý body form URL
