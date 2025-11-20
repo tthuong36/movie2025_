@@ -1,9 +1,5 @@
 import tmdbConfig from "./tmdb.config.js";
 
-// ⚠️ LƯU Ý:
-// tmdbConfig.getUrl() hiện đang ghép BASE_URL + path
-// → NÊN path phải đúng theo backend bạn đã tạo.
-
 const tmdbEndpoints = {
   mediaList: ({ mediaType, mediaCategory, page }) =>
     tmdbConfig.getUrl(`media/${mediaType}/${mediaCategory}`, { page }),
@@ -27,13 +23,7 @@ const tmdbEndpoints = {
     tmdbConfig.getUrl(`media/${mediaType}/${mediaId}/recommend`),
 
   mediaSearch: ({ mediaType, query, page }) =>
-    tmdbConfig.getUrl(`media/search`, { mediaType, query, page }),
-
-  personDetail: ({ personId }) =>
-    tmdbConfig.getUrl(`person/${personId}`),
-
-  personMedias: ({ personId }) =>
-    tmdbConfig.getUrl(`person/${personId}/medias`)
+    tmdbConfig.getUrl(`media/search`, { mediaType, query, page })
 };
 
 export default tmdbEndpoints;

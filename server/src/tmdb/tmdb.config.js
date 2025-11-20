@@ -1,16 +1,17 @@
-// KHÔNG đọc key ở đây
+const getUrl = (endpoint, params = {}) => {
+  // BASE_URL của backend (FE sẽ lấy từ .env)
+  const baseUrl = process.env.REACT_APP_API_URL || process.env.NEXT_PUBLIC_API_URL;
 
-const getUrl = (endpoint, params) => {
-  // Đọc key và url BÊN TRONG hàm này (Lazy Loading)
-  // Bằng cách này, biến sẽ được truy cập khi hàm được gọi (runtime), 
-  // sau khi 'dotenv' đã làm xong việc của nó.
-  const baseUrl = process.env.TMDB_BASE_URL;
-  const key = process.env.TMDB_KEY;
+  if (!baseUrl) {
+    console.warn("❗ API BASE URL is missing. Check your .env file.");
+  }
 
-  const qs = new URLSearchParams(params);
-console.log("GENERATED URL PATH:", `${baseUrl}${endpoint}?api_key=...`);
+  // Build query string
+  const qs = new URLSearchParams(params).toString();
 
-  return `${baseUrl}${endpoint}?api_key=${key}&${qs}`;
+  console.log("GENERATED BACKEND URL:", `${baseUrl}/${endpoint}?${qs}`);
+
+  return `${baseUrl}/${endpoint}?${qs}`;
 };
 
 export default { getUrl };
