@@ -11,6 +11,6 @@ router.use('/review', reviewRoutes);
 router.use('/videos', videoRoutes); 
 
 // THAY THẾ: Gắn mediaRoutes ở root để nó không tiêu thụ biến mediaType
-router.use('/', mediaRoutes); 
+router.use('/media', mediaRoutes);
 
 export default router;  
