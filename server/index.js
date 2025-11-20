@@ -3,7 +3,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import http from "http";
 import mongoose from "mongoose";
-import dotenv from "dotenv";           // ✅ Load .env
+import dotenv from "dotenv";
 dotenv.config();
 
 import { Server } from "socket.io";
@@ -12,6 +12,7 @@ import { v4 as uuidv4 } from "uuid";
 import routes from "./src/routes/index.js";
 import paymentRoutes from "./src/routes/paymentRoutes.js";
 import videoRoute from "./src/routes/video.routes.js";
+import tmdbProxyRoutes from "./src/routes/tmdb.proxy.route.js";
 
 // ----------------------------------------------------
 // KHỞI TẠO EXPRESS & HTTP SERVER
@@ -41,13 +42,6 @@ const corsOptions = {
 };
 
 // ----------------------------------------------------
-// SOCKET.IO SERVER
-// ----------------------------------------------------
-const io = new Server(server, {
-  cors: corsOptions
-});
-
-// ----------------------------------------------------
 // MIDDLEWARES
 // ----------------------------------------------------
 app.options("*", cors(corsOptions));
@@ -56,6 +50,11 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+
+// ----------------------------------------------------
+// TMDB PROXY ROUTE (PHẢI ĐẶT SAU KHI KHAI BÁO app)
+// ----------------------------------------------------
+app.use("/api/proxy/tmdb", tmdbProxyRoutes);
 
 // ----------------------------------------------------
 // API ROUTES
@@ -69,8 +68,13 @@ app.get("/", (req, res) => {
 });
 
 // ----------------------------------------------------
-// SOCKET.IO EVENTS (WATCH PARTY SYNC)
+// SOCKET.IO SERVER
 // ----------------------------------------------------
+const io = new Server(server, {
+  cors: corsOptions
+});
+
+// SOCKET.IO EVENTS
 io.on("connection", (socket) => {
   console.log(`Socket User connected: ${socket.id}`);
 

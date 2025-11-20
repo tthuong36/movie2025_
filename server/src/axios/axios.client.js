@@ -1,34 +1,41 @@
 import axios from "axios";
 
-// Đã sửa: Để code sạch sẽ, dùng biến TMDB_KEY và BASE_URL như hằng số
-const TMDB_KEY = "5128552c9ce86adc06116a7b87ecc97b"; 
-const baseURL = "https://api.themoviedb.org/3/";
+// FE chỉ gọi backend proxy TMDB → KHÔNG dùng TMDB_KEY ở FE nữa
+// Key nằm trong backend, an toàn và không bị lộ.
+
+// ===============================
+// CẤU HÌNH AXIOS CLIENT
+// ===============================
 
 const axiosClient = axios.create({
-    baseURL
+  baseURL: "https://movie2025-me3hox7luz-tthuong36-projects.vercel.app/api/proxy/tmdb/"
 });
 
-axiosClient.interceptors.request.use(async (config) => {
-    
-    config.params = {
-        ...config.params,
-        api_key: TMDB_KEY // Sử dụng Key
-    };
-    return config;
-}, (error) => {
-    return Promise.reject(error);
-});
+// ===============================
+// REQUEST INTERCEPTOR
+// (Không thêm TMDB_KEY, backend đã xử lý)
+// ===============================
+axiosClient.interceptors.request.use(
+  (config) => {
+    // Không sửa params nữa, giữ nguyên
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
 
-// =============================================
-// SỬA RESPONSE INTERCEPTOR ĐỂ TRẢ VỀ LỖI CHUẨN
-// =============================================
-axiosClient.interceptors.response.use((response) => {
-    if (response && response.data) return response.data;
-    return response;
-}, (error) => {
-    // Nếu có lỗi, chúng ta dùng Promise.reject(error) để ném ra đối tượng lỗi AXIOS chuẩn, 
-    // thay vì chỉ ném ra dữ liệu thô (data)
-    return Promise.reject(error); 
-});
+// ===============================
+// RESPONSE INTERCEPTOR
+// ===============================
+axiosClient.interceptors.response.use(
+  (response) => {
+    // backend trả dữ liệu thuần → FE chỉ lấy data
+    if (response && response.data) return response.data;
+    return response;
+  },
+  (error) => {
+    // Trả lỗi theo axios chuẩn
+    return Promise.reject(error);
+  }
+);
 
 export default axiosClient;

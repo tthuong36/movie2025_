@@ -1,13 +1,18 @@
-const getUrl = (endpoint, params = {}) => {
-  const baseUrl = process.env.REACT_APP_API_URL;
-
-  if (!baseUrl) {
-    console.warn("⚠️ Missing REACT_APP_API_URL in client/.env");
-  }
-
-  const qs = new URLSearchParams(params).toString();
-
-  return `${baseUrl}/${endpoint}?${qs}`;
+const tmdbConfigs = {
+  mediaType: {
+    movie: "movie",
+    tv: "tv"
+  },
+  mediaCategory: {
+    popular: "popular",
+    top_rated: "top_rated",
+    upcoming: "upcoming",
+    now_playing: "now_playing"
+  },
+  backdropPath: (img) =>
+    `https://image.tmdb.org/t/p/original${img}`,
+  posterPath: (img) =>
+    `https://image.tmdb.org/t/p/w500${img}`
 };
 
-export default { getUrl };
+export default tmdbConfigs;
