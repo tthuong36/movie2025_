@@ -22,37 +22,33 @@ const port = process.env.PORT || 5000;
 const server = http.createServer(app);
 
 // ----------------------------------------------------
-// CORS CONFIG
+// CORS CONFIG – BẢN HOÀN CHỈNH
 // ----------------------------------------------------
 const allowedOrigins = [
   "http://localhost:3000",
   "https://movie2025-me3hox7luz-tthuong36-projects.vercel.app"
 ];
 
+// KHÔNG DÙNG CALLBACK PHỨC TẠP, TRÁNH BUG CORS
 const corsOptions = {
-  origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"), false);
-    }
-  },
+  origin: allowedOrigins,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  credentials: true,
+  credentials: true
 };
+
+// Áp dụng CORS cho toàn bộ Express
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));
 
 // ----------------------------------------------------
 // MIDDLEWARES
 // ----------------------------------------------------
-app.options("*", cors(corsOptions));
-app.use(cors(corsOptions));
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 // ----------------------------------------------------
-// TMDB PROXY ROUTE (PHẢI ĐẶT SAU KHI KHAI BÁO app)
+// TMDB PROXY ROUTE
 // ----------------------------------------------------
 app.use("/api/proxy/tmdb", tmdbProxyRoutes);
 
@@ -63,15 +59,22 @@ app.use("/api/payment", paymentRoutes);
 app.use("/api/v1", routes);
 app.use("/api/v1/videos", videoRoute);
 
+// ----------------------------------------------------
+// TEST ROUTE
+// ----------------------------------------------------
 app.get("/", (req, res) => {
   res.send("Backend server is running!");
 });
 
 // ----------------------------------------------------
-// SOCKET.IO SERVER
+// SOCKET.IO – DÙNG CORS ĐỒNG NHẤT VỚI EXPRESS
 // ----------------------------------------------------
 const io = new Server(server, {
-  cors: corsOptions
+  cors: {
+    origin: allowedOrigins,
+    methods: ["GET", "POST"],
+    credentials: true
+  }
 });
 
 // SOCKET.IO EVENTS
