@@ -8,7 +8,7 @@ import axios from "axios";
 // ===============================
 
 const axiosClient = axios.create({
-  baseURL: "https://movie2025-me3hox7luz-tthuong36-projects.vercel.app/api/proxy/tmdb/"
+      baseURL: "/api/proxy/tmdb/"
 });
 
 // ===============================
