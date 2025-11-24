@@ -1,7 +1,7 @@
 import axios from "axios";
 import queryString from "query-string";
 
-const baseURL = "https://movie2025-me3hox7luz-tthuong36-projects.vercel.app/api/v1";
+const baseURL = "https://movie2025.onrender.com/api/v1";
 
 const privateClient = axios.create({
   baseURL,
@@ -10,20 +10,26 @@ const privateClient = axios.create({
   }
 });
 
-privateClient.interceptors.request.use(config => {
-  const token = localStorage.getItem("token");
-
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-
-  config.headers["Content-Type"] = "application/json";
-  return config;
-});
+privateClient.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    config.headers["Content-Type"] = "application/json";
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
 
 privateClient.interceptors.response.use(
-  (response) => response.data,
-  (err) => { throw err.response?.data || err; }
+  (response) => {
+    if (response && response.data) return response.data;
+    return response;
+  },
+  (err) => {
+    throw err.response?.data || err;
+  }
 );
 
 export default privateClient;
